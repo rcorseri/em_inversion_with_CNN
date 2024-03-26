@@ -290,10 +290,10 @@ def add_noise(Z, percentage = 5, seed = 1234):
 
 
     
-def plot_1D_model(model, depths):
+def plot_1D_model(model, depths, color='g', label='1D resistivity model'):
     plt.figure(10,figsize=(5,8))
 
-    plt.loglog(model,depths, 'g-',label= '1D resistivity model')
+    plt.loglog(model,depths, color + '-', label=label)
     # plt.ylim(0, 0.2)
     # plt.xticks([])
     

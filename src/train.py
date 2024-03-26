@@ -88,7 +88,7 @@ def train_with_physics(model, criterion, optimizer, num_epochs, input_train_rho,
     test_loss_list = []
     total_loss_list = []
     alpha = 0.5
-    beta = 0.5
+   
 
 
     for epoch in range(num_epochs):
@@ -112,7 +112,7 @@ def train_with_physics(model, criterion, optimizer, num_epochs, input_train_rho,
         
         loss_train = criterion(outputs_train, target_train)
         train_loss_list.append(loss_train.item())
-        total_loss = alpha*loss_train + beta*(loss_rho+loss_phi) 
+        total_loss = loss_train + alpha*(loss_rho+loss_phi) 
         total_loss_list.append(total_loss.item())
         
         
@@ -149,7 +149,7 @@ def train_with_batches_physics(model, criterion, optimizer, num_epochs, input_tr
     batch_size=128
     total_loss_list = []
     alpha = 0.5
-    beta = 0.5
+    
     
     train_dataset = torch.utils.data.TensorDataset(input_train_rho, input_train_phi, target_train)
     test_dataset = torch.utils.data.TensorDataset(input_test_rho, input_test_phi, target_test)
@@ -186,7 +186,7 @@ def train_with_batches_physics(model, criterion, optimizer, num_epochs, input_tr
             loss_train = criterion(outputs_train, target_train)
             loss_model = loss_rho #+ loss_rho
             
-            total_loss = alpha*loss_train + beta*(loss_model) 
+            total_loss = loss_train + alpha*(loss_model) 
 
             # Backward and optimize for training set
             optimizer.zero_grad()
