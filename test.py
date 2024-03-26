@@ -5,41 +5,59 @@ Created on Thu Mar 21 10:59:37 2024
 @author: romain
 """
 
+import sys
+sys.path.append('./src')
 
-### Test with field data
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from torchvision import transforms
+from models.cnn.CNN_multihead import CNNmultihead, CNNmultihead_with_physics
+from train import train, train_with_batches, train_with_physics, train_with_batches_physics, normalize_data
+import mt as mt
+
+
+### Read field data
 df4,b,c = mt.readEDI('./tests/field_data/BS1305_H5_14Rx036a.edi')
 ZR,ZI,dd,ff=mt.Zdet(df4)
 test2 = df4.to_numpy()
 freq = test2[:,0]
-rho = ((ZR**2+ZI**2)*0.2/(freq))
-#rho_app = abs(Z)**2 * (mu_0*2*np.pi*freq)**(-1)
-phase = np.degrees(np.arctan2(ZI,ZR))
+rho_field = ((ZR**2+ZI**2)*0.2/(freq))
+phase_field = np.degrees(np.arctan2(ZI,ZR))
+depth_list = pd.read_csv('./data/processed/depth_list.csv').to_numpy()
+period_list = pd.read_csv('./data/processed/period_list.csv').to_numpy()
+depth_list =  np.squeeze(depth_list)
+period_list = 1./(np.squeeze(period_list))
+
+
+### Normalize input data
+normalized_rho,mean_rho, std_rho = normalize_data(rho_field.reshape(-1,1))
+normalized_phi,mean_phi, std_phi = normalize_data(phase_field.reshape(-1,1))
 
 
 #test4=np.concatenate([rho[ np.newaxis,:,np.newaxis], phase[np.newaxis,:,np.newaxis]], axis=2)
-test4 =  rho[np.newaxis,:,np.newaxis]
-test5=test4.transpose((0,2,1))
+test4 = normalized_rho[np.newaxis,:,np.newaxis]
+#test5 = test4.transpose((0,2,1))
 
 
+
+### Convert Field data to tensor
 field_tensor_rho = torch.tensor(
- test5,
+ test4,
     dtype=torch.float32
 )
 
 field_tensor_rho = field_tensor_rho.permute(0, 2, 1)
 
 
-mean2 = field_tensor_rho.mean(dim=(0, 1), keepdim=True)
-std2 = field_tensor_rho.std(dim=(0, 1), keepdim=True)
-# Create a normalization transform
-normalize = transforms.Normalize(mean=mean2, std=std2)
 
-# Apply normalization to training and test sets
-field_tensor_rho = normalize(field_tensor_rho)
-
-
-
-test8 =  phase[np.newaxis,:,np.newaxis]
+test8 = normalize_phi[np.newaxis,:,np.newaxis]
 test9=test8.transpose((0,2,1))
 
 
@@ -51,19 +69,31 @@ field_tensor_phase= torch.tensor(
 field_tensor_phase = field_tensor_phase.permute(0, 2, 1)
 
 
-###Field data plot model
 
-mean3 = field_tensor_phase.mean(dim=(0, 1), keepdim=True)
-std3 = field_tensor_phase.std(dim=(0, 1), keepdim=True)
-# Create a normalization transform
-normalize = transforms.Normalize(mean=mean3, std=std3)
-
-# Apply normalization to training and test sets
-field_tensor_phase = normalize(field_tensor_phase)
-test7 = model(field_tensor_rho[:, :, :],field_tensor_phase[:, :, :])
+###Load trained CNN
+# Load the trained model
+model = CNNmultihead()  # Instantiate the model
+model.load_state_dict(torch.load('./models/cnn/cnn_no_physics.pth'))
+model.eval()  # Set model to evaluation mode
 
 
+# Use the trained model for prediction
+outputs = model(input_tensor_rho, input_tensor_phi)
 
-plt.semilogx(depths, test7.detach().numpy(), 'gd')  # , label='Predicted Data')
-plt.legend()
+
+#Plot predicted model and its response
+mt.plot_1D_model(outputs_example.detach().numpy().flatten(),depth_list,color='g',label='Predicted model')
 plt.show()
+
+
+rho, phi = mt.forward_1D_MT(outputs[example_index].detach().numpy().flatten(), depth_list, (1./period_list)) 
+mt.plot_rho_phi(rho, phi, period_list, color='g', label='Model')
+mt.plot_rho_phi(rho_field, phase_field, period_list, color='r', label='Data')
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+

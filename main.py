@@ -42,26 +42,28 @@ input_train_rho, input_test_rho, target_train, target_test = train_test_split(in
 input_train_phi, input_test_phi, target_train_p, target_test_p = train_test_split(input_tensor_phi, target_tensor,test_size=0.2,random_state=random_state)
 
 ### Instantiate the model, loss function, and optimizer
-num_epochs = 150
+num_epochs = 50
 learning_rate = 0.01
-#model = CNNmultihead_with_physics()
-model = CNNmultihead()
+model = CNNmultihead_with_physics()
+#model = CNNmultihead()
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
 ### Training CNN
+#trained_model, train_loss_list, test_loss_list = train_with_batches(model, criterion, optimizer, num_epochs, input_train_rho, input_train_phi, target_train, input_test_rho, input_test_phi, target_test)
+trained_model, train_loss_list, test_loss_list, model_loss_list, total_loss_list = train_with_batches_physics(model, criterion, optimizer, num_epochs, input_train_rho, input_train_phi, target_train, input_test_rho, input_test_phi, target_test,depth_list,period_list)
 
 
-trained_model, train_loss_list, test_loss_list = train_with_batches(model, criterion, optimizer, num_epochs, input_train_rho, input_train_phi, target_train, input_test_rho, input_test_phi, target_test)
-#trained_model, train_loss_list, test_loss_list, model_loss_list, total_loss_list = train_with_batches_physics(model, criterion, optimizer, num_epochs, input_train_rho, input_train_phi, target_train, input_test_rho, input_test_phi, target_test,depth_list,period_list)
+### Save the trained model
+torch.save(trained_model.state_dict(), './models/cnn/cnn_with_physics.pth')
 
 
 ### Plotting the loss function for training and test sets
 plt.figure(figsize=(8,6))
 plt.semilogy(train_loss_list[:], label='Training Loss', color='blue')
 plt.semilogy(test_loss_list[:],linestyle='dotted',label='Test Loss', color='blue')
-#plt.semilogy(model_loss_list[:], label='Model Loss', color='magenta')
-#plt.semilogy(total_loss_list[:], label='Total Loss', color='black')
+plt.semilogy(model_loss_list[:], label='Model Loss', color='magenta')
+plt.semilogy(total_loss_list[:], label='Total Loss', color='black')
 
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
