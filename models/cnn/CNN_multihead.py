@@ -13,7 +13,7 @@ conv1_filters = 16
 conv2_filters = 32
 k = 3
 dense_nodes = 250
-min_val = -2
+min_val = -1
 max_val = 4
 threshold = 0.1
 
@@ -80,19 +80,16 @@ class CNNmultihead(nn.Module):
         out = self.fc2(out)
        
         
-        out =  min_val + (max_val - min_val) * self.sigmoid6(out)
-     
+        #out =  min_val + (max_val - min_val) * self.sigmoid6(out)
+        out = self.relu6(out)
         
         return out
     
     
-    
-    
-    
-    
-class ResNet_CNNmultihead(nn.Module):
+
+class CNNmultihead_with_physics(nn.Module):
     def __init__(self):
-        super(ResNet_CNNmultihead, self).__init__()
+        super(CNNmultihead_with_physics, self).__init__()
 
         # Entry 1
         self.layer1 = nn.Conv1d(1, conv1_filters, kernel_size=k, stride=1, padding=0)
@@ -146,15 +143,13 @@ class ResNet_CNNmultihead(nn.Module):
         y = self.flatten_2(y)
       
 
-        out = torch.cat((x, y), dim=1)  # Concatenate along the correct dimension
+        out = torch.cat((x, y), dim=1)  
 
         out = self.relu5(self.fc1(out))
         out = self.fc2(out)
        
         
-        #out = min_val + (max_val - min_val) * self.relu6(out)
         out =  min_val + (max_val - min_val) * self.sigmoid6(out)
-        #print(out)
-        #out = enforce_constraint(out, threshold)
+     
         
         return out
