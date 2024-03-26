@@ -57,10 +57,10 @@ trained_model, train_loss_list, test_loss_list, model_loss_list, total_loss_list
 
 ### Plotting the loss function for training and test sets
 plt.figure(figsize=(10, 6))
-plt.semilogy(train_loss_list[:50], label='Training Loss', color='blue')
-plt.semilogy(test_loss_list[:50], label='Test Loss', color='red')
-plt.semilogy(model_loss_list[:50], label='model Loss', color='magenta')
-plt.semilogy(total_loss_list[:50], label='Total Loss', color='black')
+plt.semilogy(train_loss_list[:], label='Training Loss', color='blue')
+plt.semilogy(test_loss_list[:], label='Test Loss', color='red')
+plt.semilogy(model_loss_list[:], label='model Loss', color='magenta')
+plt.semilogy(total_loss_list[:], label='Total Loss', color='black')
 
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
@@ -70,7 +70,7 @@ plt.show()
 
 
 #### Testing the model on a specific example
-example_index = 1
+example_index = 11
 outputs_example = trained_model(input_test_rho[example_index:example_index+1, :, :], input_test_phi[example_index:example_index+1, :, :])
 mt.plot_1D_model(target_test[example_index],depth_list,color='r',label='Target model')
 mt.plot_1D_model(outputs_example.detach().numpy().flatten(),depth_list,color='g',label='Predicted model')

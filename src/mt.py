@@ -308,5 +308,26 @@ def plot_1D_model(model, depths, color='g', label='1D resistivity model'):
     
 
 
+def plot_rho_phi(rho_app,phi,period_list):
+
+    plt.figure(10,figsize=(4.5,9))
+    period_list = pd.read_csv('C:/Users/romain.VBER/Documents/PHD/COURSES/FYS5429/Project1/em_inversion_with_CNN/data/processed/period_list.csv').to_numpy()
+    
+    Tmin = np.log10(period_list).min()-0.5
+    Tmax = np.log10(period_list).max()+0.5
+    
+    plt.plot(np.log10(period_list), np.log10(rho), 'g-',label= '1D rho app')
+    plt.xlim(Tmin,Tmax)
+    plt.legend(loc=3,framealpha = 1, edgecolor='k')
+    plt.ylabel('RHO APP ($Log_{10}\Omega$)')
+    plt.grid(linestyle=':')
+    
+
+    plt.plot(np.log10(period_list), phi , 'g-',label= '1D Phase')
+    plt.legend(framealpha = 1, edgecolor='k',loc=3)
+    plt.xlim(Tmin,Tmax)
+    plt.ylabel('Phase (degrees)')
+    plt.grid(linestyle=':')
+    
 
     

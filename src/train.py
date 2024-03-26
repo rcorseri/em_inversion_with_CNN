@@ -148,7 +148,7 @@ def train_with_batches_physics(model, criterion, optimizer, num_epochs, input_tr
     test_loss_list = []
     batch_size=128
     total_loss_list = []
-    alpha = 0.5
+    alpha = 0.25
     
     
     train_dataset = torch.utils.data.TensorDataset(input_train_rho, input_train_phi, target_train)
