@@ -42,7 +42,7 @@ input_train_rho, input_test_rho, target_train, target_test = train_test_split(in
 input_train_phi, input_test_phi, target_train_p, target_test_p = train_test_split(input_tensor_phi, target_tensor,test_size=0.2,random_state=random_state)
 
 ### Instantiate the model, loss function, and optimizer
-num_epochs = 100
+num_epochs = 150
 learning_rate = 0.01
 #model = CNNmultihead_with_physics()
 model = CNNmultihead()
