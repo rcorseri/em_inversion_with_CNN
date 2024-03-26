@@ -293,7 +293,7 @@ def add_noise(Z, percentage = 5, seed = 1234):
 def plot_1D_model(model, depths, color='g', label='1D resistivity model'):
     plt.figure(10,figsize=(5,8))
 
-    plt.loglog(model,depths, color + '-', label=label)
+    plt.loglog(10**model,depths, color + '-', label=label)
     # plt.ylim(0, 0.2)
     # plt.xticks([])
     
@@ -301,6 +301,7 @@ def plot_1D_model(model, depths, color='g', label='1D resistivity model'):
    
     plt.legend(loc=3,framealpha = 1, edgecolor='k')
     plt.ylabel('Depth (m)')
+    plt.xlim(0.1,10000)
     plt.xlabel ('Resistivity (ohm.m)')
     plt.grid(linestyle=':')
     plt.gca().invert_yaxis()
@@ -308,26 +309,31 @@ def plot_1D_model(model, depths, color='g', label='1D resistivity model'):
     
 
 
-def plot_rho_phi(rho_app,phi,period_list):
+def plot_rho_phi(rho_app,phi,period_list,color='g', label='1D response'):
 
-    plt.figure(10,figsize=(4.5,9))
-    period_list = pd.read_csv('C:/Users/romain.VBER/Documents/PHD/COURSES/FYS5429/Project1/em_inversion_with_CNN/data/processed/period_list.csv').to_numpy()
+    # Create a figure and axes
+    plt.figure(figsize=(6, 6))
     
-    Tmin = np.log10(period_list).min()-0.5
-    Tmax = np.log10(period_list).max()+0.5
-    
-    plt.plot(np.log10(period_list), np.log10(rho), 'g-',label= '1D rho app')
-    plt.xlim(Tmin,Tmax)
-    plt.legend(loc=3,framealpha = 1, edgecolor='k')
-    plt.ylabel('RHO APP ($Log_{10}\Omega$)')
+    # Plot rho_app on the first subplot
+    plt.subplot(2, 1, 1)
+    plt.plot(np.log10(period_list), np.log10(rho_app), color + '-', label=label)
+    plt.xlim(-0.5, 4)
+    plt.ylim(0,3)
+    plt.legend(framealpha=1, edgecolor='k', loc=3)
+    plt.ylabel('Apparent Resisitivity ($Log_{10}\Omega$)')
     plt.grid(linestyle=':')
     
-
-    plt.plot(np.log10(period_list), phi , 'g-',label= '1D Phase')
-    plt.legend(framealpha = 1, edgecolor='k',loc=3)
-    plt.xlim(Tmin,Tmax)
+    # Plot phi on the second subplot
+    plt.subplot(2, 1, 2)
+    plt.plot(np.log10(period_list), phi, color + '-', label=label)
+    plt.xlim(-0.5, 4)
+    plt.ylim(0, 90)
+    plt.legend(framealpha=1, edgecolor='k', loc=3)
     plt.ylabel('Phase (degrees)')
+    plt.xlabel('Period ($Log_{10}(s)$)')
     plt.grid(linestyle=':')
-    
+
+
+
 
     

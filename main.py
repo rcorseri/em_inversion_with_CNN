@@ -24,7 +24,7 @@ target_data = pd.read_csv('./data/target/target_training.csv').to_numpy()
 depth_list = pd.read_csv('./data/processed/depth_list.csv').to_numpy()
 period_list = pd.read_csv('./data/processed/period_list.csv').to_numpy()
 depth_list =  np.squeeze(depth_list)
-period_list = np.squeeze(period_list)
+period_list = 1./(np.squeeze(period_list))
 
 ### Normalize input data
 normalized_rho,mean_rho, std_rho = normalize_data(apparent_resistivity_data)
@@ -42,7 +42,7 @@ input_train_rho, input_test_rho, target_train, target_test = train_test_split(in
 input_train_phi, input_test_phi, target_train_p, target_test_p = train_test_split(input_tensor_phi, target_tensor,test_size=0.2,random_state=random_state)
 
 ### Instantiate the model, loss function, and optimizer
-num_epochs = 100
+num_epochs = 20
 learning_rate = 0.01
 model = CNNmultihead()
 criterion = nn.MSELoss()
@@ -59,7 +59,7 @@ trained_model, train_loss_list, test_loss_list, model_loss_list, total_loss_list
 plt.figure(figsize=(10, 6))
 plt.semilogy(train_loss_list[:], label='Training Loss', color='blue')
 plt.semilogy(test_loss_list[:], label='Test Loss', color='red')
-plt.semilogy(model_loss_list[:], label='model Loss', color='magenta')
+plt.semilogy(model_loss_list[:], label='Model Loss', color='magenta')
 plt.semilogy(total_loss_list[:], label='Total Loss', color='black')
 
 plt.xlabel('Epochs')
@@ -70,8 +70,15 @@ plt.show()
 
 
 #### Testing the model on a specific example
-example_index = 11
+example_index = 190
 outputs_example = trained_model(input_test_rho[example_index:example_index+1, :, :], input_test_phi[example_index:example_index+1, :, :])
 mt.plot_1D_model(target_test[example_index],depth_list,color='r',label='Target model')
 mt.plot_1D_model(outputs_example.detach().numpy().flatten(),depth_list,color='g',label='Predicted model')
+plt.show()
+
+rho, phi = mt.forward_1D_MT(outputs_example.detach().numpy().flatten(), depth_list, (1./period_list)) 
+rho2, phi2 = mt.forward_1D_MT(target_test[example_index].numpy(), depth_list, (1./period_list)) 
+mt.plot_rho_phi(rho, phi,period_list,color='g',label='Model')
+mt.plot_rho_phi(rho2, phi2,period_list,color='r',label='Data')
+plt.tight_layout()
 plt.show()

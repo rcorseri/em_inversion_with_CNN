@@ -184,9 +184,9 @@ def train_with_batches_physics(model, criterion, optimizer, num_epochs, input_tr
             loss_rho = criterion(torch.tensor(input_rho[:, :, np.newaxis], dtype=torch.float32), input_train_rho)
             #loss_phi = criterion(torch.tensor(input_phi[:, :, np.newaxis], dtype=torch.float32),input_train_phi)
             loss_train = criterion(outputs_train, target_train)
-            loss_model = loss_rho #+ loss_rho
+            loss_model =alpha* loss_rho #+ loss_rho
             
-            total_loss = loss_train + alpha*(loss_model) 
+            total_loss = loss_train + loss_model 
 
             # Backward and optimize for training set
             optimizer.zero_grad()
