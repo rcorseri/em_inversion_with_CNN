@@ -42,7 +42,7 @@ input_train_rho, input_test_rho, target_train, target_test = train_test_split(in
 input_train_phi, input_test_phi, target_train_p, target_test_p = train_test_split(input_tensor_phi, target_tensor,test_size=0.2,random_state=random_state)
 
 ### Instantiate the model, loss function, and optimizer
-num_epochs = 50
+num_epochs = 100
 learning_rate = 0.01
 model = CNNmultihead_with_physics()
 #model = CNNmultihead()
@@ -73,7 +73,7 @@ plt.show()
 
 
 #### Testing the model on a specific example
-example_index = 376
+example_index = 1000
 outputs_example = trained_model(input_test_rho[example_index:example_index+1, :, :], input_test_phi[example_index:example_index+1, :, :])
 mt.plot_1D_model(target_test[example_index],depth_list,color='r',label='Target model')
 mt.plot_1D_model(outputs_example.detach().numpy().flatten(),depth_list,color='g',label='Predicted model')
