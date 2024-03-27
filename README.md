@@ -1,13 +1,14 @@
 # 1D Magnetotelluric Inversion using Physics-Informed CNN
-Overview
 
 ### Author: R. Corseri
 
 ## Overview 
+
 This repository contains code for performing 1D magnetotelluric (MT) inversion using a physics-informed convolutional neural network (CNN). The project aims to leverage deep learning techniques to perform 1D magnetotelluric inversion. Magnetotellurics is a geophysical method used for imaging electrical conductivity of the subsurface.
 
 
 ## Features
+
 - Implementation of a multihead CNN architecture tailored for 1D MT inversion.
 - Integration of physics-based constraints into the CNN model to improve inversion results.
 - Input data preprocessing and normalization routines.
